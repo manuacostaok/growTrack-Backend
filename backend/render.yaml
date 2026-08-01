@@ -3,7 +3,6 @@ services:
     name: growtrack-pro-backend
     runtime: node
     plan: free
-    rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     envVars:
