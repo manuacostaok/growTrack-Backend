@@ -6,6 +6,8 @@ const cultivoSchema = new mongoose.Schema(
   {
     usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     nombre: { type: String, required: true, trim: true },
+    tipoCultivo: { type: String, enum: ['planta', 'sala'], default: 'planta' },
+    cantidadPlantas: { type: Number, default: 1, min: 1 },
     variedad: { type: String, trim: true },
     banco: { type: String, trim: true },
     fotoperiodo: { type: String, enum: ['fotoperiodo', 'autofloreciente'], default: 'fotoperiodo' },

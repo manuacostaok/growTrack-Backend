@@ -52,7 +52,7 @@ const obtener = asyncHandler(async (req, res) => {
 
 const actualizar = asyncHandler(async (req, res) => {
   const cultivo = await obtenerUnoOFallar(req.params.id, req.user._id);
-  const camposPermitidos = ['nombre', 'variedad', 'banco', 'fotoperiodo', 'fechaGerminacion', 'maceta', 'ubicacion', 'notas', 'pesoFinalGramos'];
+  const camposPermitidos = ['nombre', 'tipoCultivo', 'cantidadPlantas', 'variedad', 'banco', 'fotoperiodo', 'fechaGerminacion', 'maceta', 'ubicacion', 'notas', 'pesoFinalGramos'];
   camposPermitidos.forEach((campo) => {
     if (req.body[campo] !== undefined) cultivo[campo] = req.body[campo];
   });

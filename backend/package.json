@@ -4,9 +4,7 @@
   "description": "API de GrowTrack Pro — auth, cultivos y seguimiento diario",
   "main": "src/server.js",
   "type": "commonjs",
-  "engines": {
-    "node": ">=18.0.0"
-  },
+  "engines": { "node": ">=18.0.0" },
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
@@ -15,7 +13,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
     "bcryptjs": "^2.4.3",
-    "cloudinary": "^2.10.0",
+    "cloudinary": "^2.2.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

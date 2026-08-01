@@ -13,9 +13,18 @@ Respondé ÚNICAMENTE con un JSON válido, sin texto antes ni después, con esta
 
 Si la imagen no muestra una planta con claridad, respondé igual con el JSON pero indicando eso en "aclaracion" y dejando "hallazgos" vacío.`;
 
+const DIAGNOSTICOS_GRATIS_PERMITIDOS = 1;
+
 const diagnosticar = asyncHandler(async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'Subí una foto para analizar.' });
+  }
+
+  const esPlanPago = req.user.plan === 'pro' || req.user.plan === 'premium';
+  if (!esPlanPago && req.user.diagnosticosGratisUsados >= DIAGNOSTICOS_GRATIS_PERMITIDOS) {
+    return res.status(402).json({
+      error: 'Ya usaste tu diagnóstico gratis. Pasate a Pro o Premium para diagnósticos ilimitados.',
+    });
   }
 
   const base64 = req.file.buffer.toString('base64');
@@ -46,7 +55,18 @@ const diagnosticar = asyncHandler(async (req, res) => {
     return res.status(502).json({ error: 'La IA devolvió una respuesta que no se pudo interpretar. Probá de nuevo.' });
   }
 
-  res.json({ data: { diagnostico } });
+  if (!esPlanPago) {
+    req.user.diagnosticosGratisUsados += 1;
+    await req.user.save();
+  }
+
+  res.json({
+    data: {
+      diagnostico,
+      diagnosticosGratisUsados: req.user.diagnosticosGratisUsados,
+      diagnosticosGratisPermitidos: DIAGNOSTICOS_GRATIS_PERMITIDOS,
+    },
+  });
 });
 
 module.exports = { diagnosticar };
