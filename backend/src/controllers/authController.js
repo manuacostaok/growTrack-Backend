@@ -7,8 +7,8 @@ const { generarAccessToken, generarRefreshToken } = require('../utils/generateTo
 const esProduccion = process.env.NODE_ENV === 'production';
 const cookieOptions = {
   httpOnly: true,
-  secure: esProduccion, // SameSite=None exige secure:true (solo funciona sobre https)
-  sameSite: esProduccion ? 'none' : 'lax', // 'none' porque el front y el back viven en dominios distintos
+  secure: esProduccion, // solo exige https en producción
+  sameSite: 'lax', // con el proxy de Vercel (/api/* -> Render) el front y el back quedan en el mismo dominio
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
