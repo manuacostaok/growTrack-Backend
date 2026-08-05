@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Cultivo = require('../models/Cultivo');
 const Subscription = require('../models/Subscription');
+const Feedback = require('../models/Feedback');
 const asyncHandler = require('../utils/asyncHandler');
 
 const listarUsuarios = asyncHandler(async (req, res) => {
@@ -48,4 +49,9 @@ const metricas = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { listarUsuarios, cambiarPlanUsuario, metricas };
+const listarFeedback = asyncHandler(async (req, res) => {
+  const feedback = await Feedback.find().sort({ createdAt: -1 }).limit(100).populate('usuario', 'nombre email');
+  res.json({ data: { feedback } });
+});
+
+module.exports = { listarUsuarios, cambiarPlanUsuario, metricas, listarFeedback };

@@ -42,8 +42,7 @@ curl http://localhost:4000/api/v1/cultivos \
 
 ## Qué falta para producción
 
-- Rate limiting (`express-rate-limit`) en `/auth/login` para evitar fuerza bruta.
-- Validación de body con `zod` o `joi` en vez de checks manuales.
+- Validación de body con `zod` o `joi` en vez de checks manuales (ahora hay `helmet`, `express-rate-limit` y `express-mongo-sanitize`, pero la validación de forma de los datos sigue siendo manual).
 - Tests (Jest + supertest) sobre los controladores.
 - Verificación de firma del webhook de Mercado Pago (por ahora confía en el `external_reference`, que alcanza para un MVP pero conviene reforzar antes de manejar dinero real).
 
