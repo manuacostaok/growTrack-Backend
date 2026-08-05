@@ -1,6 +1,6 @@
 # GrowTrack Pro — API
 
-Backend completo: autenticación (JWT), CRUD de cultivos y seguimiento diario, fotos (Cloudinary), pagos (Mercado Pago), analítica propia, calendario de eventos, base de conocimiento, panel admin y diagnóstico por IA (Anthropic).
+Backend completo: autenticación (JWT), CRUD de cultivos y seguimiento diario, fotos (Cloudinary), pagos (Mercado Pago), analítica propia, calendario de eventos, base de conocimiento, panel admin y diagnóstico por IA (Gemini).
 
 ## Puesta en marcha
 
@@ -21,7 +21,7 @@ npm run seed:conocimiento
 
 - Fotos: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
 - Pagos: `MERCADOPAGO_ACCESS_TOKEN`, `PRECIO_PRO`, `PRECIO_PREMIUM`, `API_PUBLIC_URL`
-- IA: `ANTHROPIC_API_KEY`
+- IA: `GEMINI_API_KEY` (gratis en aistudio.google.com/apikey)
 
 Si no completás alguna, esa función específica va a fallar al usarla, pero el resto de la API funciona igual.
 

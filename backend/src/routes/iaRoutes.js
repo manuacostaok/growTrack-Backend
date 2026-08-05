@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { auth } = require('../middleware/auth');
-const { uploadMemoria } = require('../config/anthropic');
+const { uploadMemoria } = require('../config/gemini');
 const iaController = require('../controllers/iaController');
 
 router.use(auth);

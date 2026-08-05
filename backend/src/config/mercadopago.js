@@ -1,7 +1,6 @@
-const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
+const { MercadoPagoConfig, PreApproval } = require('mercadopago');
 
-let _preferenceClient = null;
-let _paymentClient = null;
+let _preApprovalClient = null;
 
 function getClients() {
   if (!process.env.MERCADOPAGO_ACCESS_TOKEN) {
@@ -9,12 +8,11 @@ function getClients() {
     err.status = 503;
     throw err;
   }
-  if (!_preferenceClient) {
+  if (!_preApprovalClient) {
     const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN });
-    _preferenceClient = new Preference(client);
-    _paymentClient = new Payment(client);
+    _preApprovalClient = new PreApproval(client);
   }
-  return { preferenceClient: _preferenceClient, paymentClient: _paymentClient };
+  return { preApprovalClient: _preApprovalClient };
 }
 
 module.exports = { getClients };

@@ -5,7 +5,8 @@ const pagoController = require('../controllers/pagoController');
 router.post('/webhook', pagoController.webhook); // pública, la llama Mercado Pago
 
 router.use(auth);
-router.post('/crear-preferencia', pagoController.crearPreferencia);
+router.post('/crear-suscripcion', pagoController.crearSuscripcion);
+router.post('/cancelar-suscripcion', pagoController.cancelarSuscripcion);
 router.get('/mi-suscripcion', pagoController.miSuscripcion);
 
 module.exports = router;

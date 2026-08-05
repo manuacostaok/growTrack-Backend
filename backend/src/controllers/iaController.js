@@ -1,9 +1,9 @@
-const { getAnthropicClient } = require('../config/anthropic');
+const { getGeminiClient } = require('../config/gemini');
 const asyncHandler = require('../utils/asyncHandler');
 
 const PROMPT_SISTEMA = `Sos un asistente experto en cultivo de cannabis que analiza fotos de plantas para ayudar a cultivadores aficionados a identificar problemas visibles (deficiencias nutricionales, plagas, hongos, estrés hídrico o lumínico).
 
-Respondé ÚNICAMENTE con un JSON válido, sin texto antes ni después, con esta forma exacta:
+Respondé ÚNICAMENTE con un JSON válido, sin texto antes ni después, sin \`\`\`, con esta forma exacta:
 {
   "estadoGeneral": "optimo" | "bueno" | "con_estres" | "con_problemas",
   "hallazgos": [{ "tipo": "string corto, ej. 'Deficiencia de magnesio'", "confianza": "baja" | "media" | "alta", "descripcion": "1-2 frases explicando qué se ve en la imagen" }],
@@ -28,24 +28,15 @@ const diagnosticar = asyncHandler(async (req, res) => {
   }
 
   const base64 = req.file.buffer.toString('base64');
-  const anthropic = getAnthropicClient();
+  const genAI = getGeminiClient();
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash', systemInstruction: PROMPT_SISTEMA });
 
-  const respuesta = await anthropic.messages.create({
-    model: 'claude-sonnet-5',
-    max_tokens: 1000,
-    system: PROMPT_SISTEMA,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          { type: 'image', source: { type: 'base64', media_type: req.file.mimetype, data: base64 } },
-          { type: 'text', text: 'Analizá esta foto de mi planta.' },
-        ],
-      },
-    ],
-  });
+  const resultado = await model.generateContent([
+    { inlineData: { mimeType: req.file.mimetype, data: base64 } },
+    'Analizá esta foto de mi planta.',
+  ]);
 
-  const textoRespuesta = respuesta.content.find((b) => b.type === 'text')?.text || '{}';
+  const textoRespuesta = resultado.response.text();
 
   let diagnostico;
   try {
