@@ -25,6 +25,17 @@ npm run seed:conocimiento
 
 Si no completás alguna, esa función específica va a fallar al usarla, pero el resto de la API funciona igual.
 
+### Notificaciones push (recordatorios al celular, Pro/Premium)
+
+```bash
+npm install                    # ya trae web-push
+npx web-push generate-vapid-keys
+```
+
+Te va a imprimir un `Public Key` y un `Private Key` — pegalos en `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY`. Sin esto, el botón de activar notificaciones en la app va a avisar que "todavía no están configuradas" pero el resto de la app sigue funcionando normal.
+
+El job que revisa y manda los recordatorios (mail + push) corre solo, cada 15 minutos, mientras el server esté arriba — no hace falta configurar nada aparte.
+
 ### Crear un usuario admin
 
 No hay endpoint para esto por seguridad: registrate normal desde `/register` y después cambiá el campo `rol` a `"admin"` directamente en MongoDB Atlas (Collections → users).

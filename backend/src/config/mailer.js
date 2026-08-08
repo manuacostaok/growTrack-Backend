@@ -40,4 +40,23 @@ async function enviarMailFeedback({ nombreUsuario, emailUsuario, mensaje, pagina
   }
 }
 
-module.exports = { enviarMailFeedback };
+// Le llega directo al usuario dueño del evento.
+async function enviarMailRecordatorio({ emailUsuario, nombreUsuario, titulo, tipo, cultivoNombre, fecha }) {
+  const transporter = getTransporter();
+  if (!transporter) return false;
+
+  try {
+    await transporter.sendMail({
+      from: `"GrowTrack Pro" <${process.env.SMTP_USER}>`,
+      to: emailUsuario,
+      subject: `🌱 Recordatorio: ${titulo}`,
+      text: `Hola ${nombreUsuario},\n\nTe recordamos: "${titulo}" (${tipo}) en tu cultivo "${cultivoNombre}", programado para ${new Date(fecha).toLocaleString('es-AR')}.\n\n— GrowTrack Pro`,
+    });
+    return true;
+  } catch (err) {
+    console.error('Error al mandar el mail de recordatorio:', err.message);
+    return false;
+  }
+}
+
+module.exports = { enviarMailFeedback, enviarMailRecordatorio };

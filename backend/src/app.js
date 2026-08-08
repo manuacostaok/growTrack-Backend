@@ -16,6 +16,7 @@ const conocimientoRoutes = require('./routes/conocimientoRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const iaRoutes = require('./routes/iaRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
+const pushRoutes = require('./routes/pushRoutes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -42,6 +43,7 @@ app.use('/api/v1/conocimiento', conocimientoRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/ia', iaRoutes);
 app.use('/api/v1/feedback', feedbackRoutes);
+app.use('/api/v1/push', pushRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -10,6 +10,8 @@ const eventoSchema = new mongoose.Schema(
     titulo: { type: String, required: true },
     fecha: { type: Date, required: true },
     completado: { type: Boolean, default: false },
+    recordatorio: { type: Boolean, default: false },
+    recordatorioEnviado: { type: Boolean, default: false },
     notas: { type: String, default: '' },
   },
   { timestamps: true }
