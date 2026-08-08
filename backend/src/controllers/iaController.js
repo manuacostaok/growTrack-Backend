@@ -29,7 +29,7 @@ const diagnosticar = asyncHandler(async (req, res) => {
 
   const base64 = req.file.buffer.toString('base64');
   const genAI = getGeminiClient();
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash', systemInstruction: PROMPT_SISTEMA });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash', systemInstruction: PROMPT_SISTEMA });
 
   const resultado = await model.generateContent([
     { inlineData: { mimeType: req.file.mimetype, data: base64 } },
