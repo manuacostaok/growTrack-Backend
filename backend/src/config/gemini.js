@@ -1,7 +1,7 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenAI } = require('@google/genai');
 const multer = require('multer');
 
-let _genAI = null;
+let _ai = null;
 
 function getGeminiClient() {
   if (!process.env.GEMINI_API_KEY) {
@@ -9,10 +9,10 @@ function getGeminiClient() {
     err.status = 503;
     throw err;
   }
-  if (!_genAI) {
-    _genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  if (!_ai) {
+    _ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   }
-  return _genAI;
+  return _ai;
 }
 
 // Para diagnóstico no necesitamos guardar la foto en Cloudinary, solo mandarla a la IA.

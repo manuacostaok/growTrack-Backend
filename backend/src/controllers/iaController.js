@@ -28,15 +28,21 @@ const diagnosticar = asyncHandler(async (req, res) => {
   }
 
   const base64 = req.file.buffer.toString('base64');
-  const genAI = getGeminiClient();
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash', systemInstruction: PROMPT_SISTEMA });
+  const ai = getGeminiClient();
 
-  const resultado = await model.generateContent([
-    { inlineData: { mimeType: req.file.mimetype, data: base64 } },
-    'Analizá esta foto de mi planta.',
-  ]);
+  const resultado = await ai.models.generateContent({
+    model: 'gemini-3.6-flash',
+    contents: [
+      { inlineData: { mimeType: req.file.mimetype, data: base64 } },
+      { text: 'Analizá esta foto de mi planta.' },
+    ],
+    config: { systemInstruction: PROMPT_SISTEMA },
+  });
 
-  const textoRespuesta = resultado.response.text();
+  const textoRespuesta = resultado.text;
+  if (!textoRespuesta) {
+    return res.status(502).json({ error: 'La IA no devolvió una respuesta. Probá con otra foto.' });
+  }
 
   let diagnostico;
   try {
