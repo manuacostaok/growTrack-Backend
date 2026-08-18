@@ -8,6 +8,7 @@ router.use(auth);
 router.get('/', cultivoController.listar);
 router.post('/', cultivoController.crear);
 router.get('/dashboard/resumen', cultivoController.resumenDashboard);
+router.get('/fotos', seguimientoController.fotosPorRango);
 router.get('/:id', cultivoController.obtener);
 router.patch('/:id', cultivoController.actualizar);
 router.patch('/:id/etapa', cultivoController.cambiarEtapa);

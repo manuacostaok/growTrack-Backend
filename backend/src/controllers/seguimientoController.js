@@ -42,6 +42,35 @@ const galeriaPorCultivo = asyncHandler(async (req, res) => {
   res.json({ data: { fotos } });
 });
 
+// Todas las fotos del usuario (en cualquiera de sus cultivos) dentro de un rango de fechas — para el calendario.
+const fotosPorRango = asyncHandler(async (req, res) => {
+  const { desde, hasta } = req.query;
+  const cultivos = await Cultivo.find({ usuario: req.user._id }).select('_id nombre');
+  const cultivoIds = cultivos.map((c) => c._id);
+  const nombrePorCultivo = Object.fromEntries(cultivos.map((c) => [c._id.toString(), c.nombre]));
+
+  const filtro = { cultivo: { $in: cultivoIds }, 'fotos.0': { $exists: true } };
+  if (desde || hasta) {
+    filtro.fecha = {};
+    if (desde) filtro.fecha.$gte = new Date(desde);
+    if (hasta) filtro.fecha.$lte = new Date(hasta);
+  }
+
+  const seguimientos = await Seguimiento.find(filtro).select('fotos fecha cultivo');
+
+  const fotos = seguimientos.flatMap((s) =>
+    s.fotos.map((f) => ({
+      url: f.url,
+      cloudinaryId: f.cloudinaryId,
+      fecha: s.fecha,
+      cultivoId: s.cultivo,
+      cultivoNombre: nombrePorCultivo[s.cultivo.toString()],
+    }))
+  );
+
+  res.json({ data: { fotos } });
+});
+
 const crear = asyncHandler(async (req, res) => {
   await verificarPropiedadCultivo(req.params.cultivoId, req.user._id);
 
@@ -91,4 +120,4 @@ const subirFotos = asyncHandler(async (req, res) => {
   res.status(201).json({ data: { seguimiento } });
 });
 
-module.exports = { listarPorCultivo, crear, actualizar, eliminar, subirFotos, galeriaPorCultivo };
+module.exports = { listarPorCultivo, crear, actualizar, eliminar, subirFotos, galeriaPorCultivo, fotosPorRango };

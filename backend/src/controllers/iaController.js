@@ -29,13 +29,20 @@ const diagnosticar = asyncHandler(async (req, res) => {
 
   const base64 = req.file.buffer.toString('base64');
   const ai = getGeminiClient();
+  const contexto = (req.body.contexto || '').trim();
+
+  const partes = [
+    { inlineData: { mimeType: req.file.mimetype, data: base64 } },
+    {
+      text: contexto
+        ? `Analizá esta foto de mi planta. Contexto que me dio el cultivador: "${contexto}"`
+        : 'Analizá esta foto de mi planta.',
+    },
+  ];
 
   const resultado = await ai.models.generateContent({
     model: 'gemini-3.6-flash',
-    contents: [
-      { inlineData: { mimeType: req.file.mimetype, data: base64 } },
-      { text: 'Analizá esta foto de mi planta.' },
-    ],
+    contents: partes,
     config: { systemInstruction: PROMPT_SISTEMA },
   });
 

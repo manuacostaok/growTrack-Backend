@@ -14,8 +14,19 @@ const listar = asyncHandler(async (req, res) => {
     .skip((page - 1) * limit)
     .limit(Number(limit));
 
+  // Los seguimientos viven en otra colección — traemos el conteo real por cultivo de una sola vez.
+  const conteos = await Seguimiento.aggregate([
+    { $match: { cultivo: { $in: cultivos.map((c) => c._id) } } },
+    { $group: { _id: '$cultivo', total: { $sum: 1 } } },
+  ]);
+  const conteoPorCultivo = Object.fromEntries(conteos.map((c) => [c._id.toString(), c.total]));
+  const cultivosConConteo = cultivos.map((c) => ({
+    ...c.toObject(),
+    cantidadSeguimientos: conteoPorCultivo[c._id.toString()] || 0,
+  }));
+
   const total = await Cultivo.countDocuments(filtro);
-  res.json({ data: { cultivos, total, page: Number(page), limit: Number(limit) } });
+  res.json({ data: { cultivos: cultivosConConteo, total, page: Number(page), limit: Number(limit) } });
 });
 
 const crear = asyncHandler(async (req, res) => {
