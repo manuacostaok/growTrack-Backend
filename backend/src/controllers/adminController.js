@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Cultivo = require('../models/Cultivo');
 const Subscription = require('../models/Subscription');
 const Feedback = require('../models/Feedback');
+const DoctorClick = require('../models/DoctorClick');
 const asyncHandler = require('../utils/asyncHandler');
 
 const listarUsuarios = asyncHandler(async (req, res) => {
@@ -29,11 +30,12 @@ const cambiarPlanUsuario = asyncHandler(async (req, res) => {
 });
 
 const metricas = asyncHandler(async (req, res) => {
-  const [totalUsuarios, usuariosPorPlan, totalCultivos, suscripcionesActivas] = await Promise.all([
+  const [totalUsuarios, usuariosPorPlan, totalCultivos, suscripcionesActivas, clicksDoctor] = await Promise.all([
     User.countDocuments(),
     User.aggregate([{ $group: { _id: '$plan', total: { $sum: 1 } } }]),
     Cultivo.countDocuments({ activo: true }),
     Subscription.find({ estado: 'activa' }),
+    DoctorClick.countDocuments(),
   ]);
 
   const mrrEstimado = suscripcionesActivas.reduce((sum, s) => sum + (s.monto || 0), 0);
@@ -45,6 +47,7 @@ const metricas = asyncHandler(async (req, res) => {
       totalCultivos,
       suscripcionesActivas: suscripcionesActivas.length,
       mrrEstimadoArs: mrrEstimado,
+      clicksDoctor,
     },
   });
 });

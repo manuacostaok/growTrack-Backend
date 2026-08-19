@@ -17,5 +17,6 @@ router.delete('/:id', cultivoController.eliminar);
 router.get('/:cultivoId/seguimientos', seguimientoController.listarPorCultivo);
 router.post('/:cultivoId/seguimientos', seguimientoController.crear);
 router.get('/:cultivoId/galeria', seguimientoController.galeriaPorCultivo);
+router.get('/:id/consejos', cultivoController.listarConsejos);
 
 module.exports = router;

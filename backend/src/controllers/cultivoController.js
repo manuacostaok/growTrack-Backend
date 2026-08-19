@@ -1,5 +1,6 @@
 const Cultivo = require('../models/Cultivo');
 const Seguimiento = require('../models/Seguimiento');
+const Consejo = require('../models/Consejo');
 const asyncHandler = require('../utils/asyncHandler');
 
 const PLAN_LIMITES = { free: 2, pro: Infinity, premium: Infinity };
@@ -107,4 +108,14 @@ const resumenDashboard = asyncHandler(async (req, res) => {
   res.json({ data: { conteos, actividadReciente } });
 });
 
-module.exports = { listar, crear, obtener, actualizar, cambiarEtapa, eliminar, resumenDashboard };
+const listarConsejos = asyncHandler(async (req, res) => {
+  const cultivo = await obtenerUnoOFallar(req.params.id, req.user._id);
+  const esPlanPago = req.user.plan === 'pro' || req.user.plan === 'premium';
+  if (!esPlanPago) {
+    return res.json({ data: { consejos: [], bloqueado: true } });
+  }
+  const consejos = await Consejo.find({ cultivo: cultivo._id }).sort({ createdAt: -1 });
+  res.json({ data: { consejos, bloqueado: false } });
+});
+
+module.exports = { listar, crear, obtener, actualizar, cambiarEtapa, eliminar, resumenDashboard, listarConsejos };

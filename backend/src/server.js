@@ -2,6 +2,7 @@ require('dotenv').config();
 const app = require('./app');
 const connectDB = require('./config/db');
 const { iniciarJobRecordatorios } = require('./jobs/recordatorios');
+const { iniciarJobConsejos } = require('./jobs/consejos');
 
 const PORT = process.env.PORT || 4000;
 
@@ -9,5 +10,6 @@ connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`GrowTrack Pro API corriendo en http://localhost:${PORT}`);
     iniciarJobRecordatorios();
+    iniciarJobConsejos();
   });
 });

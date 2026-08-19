@@ -59,4 +59,23 @@ async function enviarMailRecordatorio({ emailUsuario, nombreUsuario, titulo, tip
   }
 }
 
-module.exports = { enviarMailFeedback, enviarMailRecordatorio };
+// Consejo mensual generado por IA — solo Pro/Premium.
+async function enviarMailConsejo({ emailUsuario, nombreUsuario, cultivoNombre, mensaje }) {
+  const transporter = getTransporter();
+  if (!transporter) return false;
+
+  try {
+    await transporter.sendMail({
+      from: `"GrowTrack Pro" <${process.env.SMTP_USER}>`,
+      to: emailUsuario,
+      subject: `💡 Consejo del mes para "${cultivoNombre}"`,
+      text: `Hola ${nombreUsuario},\n\nAnalizamos las últimas fotos de "${cultivoNombre}" y esto es lo que vemos:\n\n${mensaje}\n\nTambién podés verlo en la app, en el detalle del cultivo.\n\n— GrowTrack Pro`,
+    });
+    return true;
+  } catch (err) {
+    console.error('Error al mandar el mail de consejo:', err.message);
+    return false;
+  }
+}
+
+module.exports = { enviarMailFeedback, enviarMailRecordatorio, enviarMailConsejo };
