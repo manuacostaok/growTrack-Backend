@@ -53,8 +53,16 @@ const metricas = asyncHandler(async (req, res) => {
 });
 
 const listarFeedback = asyncHandler(async (req, res) => {
-  const feedback = await Feedback.find().sort({ createdAt: -1 }).limit(100).populate('usuario', 'nombre email');
-  res.json({ data: { feedback } });
+  const { page = 1, limit = 10 } = req.query;
+
+  const feedback = await Feedback.find()
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * limit)
+    .limit(Number(limit))
+    .populate('usuario', 'nombre email');
+  const total = await Feedback.countDocuments();
+
+  res.json({ data: { feedback, total, page: Number(page), limit: Number(limit) } });
 });
 
 module.exports = { listarUsuarios, cambiarPlanUsuario, metricas, listarFeedback };
