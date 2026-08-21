@@ -14,16 +14,34 @@ const listar = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
     .limit(Number(limit));
+  const cultivoIds = cultivos.map((c) => c._id);
 
   // Los seguimientos viven en otra colección — traemos el conteo real por cultivo de una sola vez.
   const conteos = await Seguimiento.aggregate([
-    { $match: { cultivo: { $in: cultivos.map((c) => c._id) } } },
+    { $match: { cultivo: { $in: cultivoIds } } },
     { $group: { _id: '$cultivo', total: { $sum: 1 } } },
   ]);
   const conteoPorCultivo = Object.fromEntries(conteos.map((c) => [c._id.toString(), c.total]));
+
+  // Último consejo de IA por cultivo, para mostrarlo como badge en la tarjeta — solo aplica a
+  // planes pagos (a free nunca se le generan consejos, así que ni consultamos).
+  let ultimoConsejoPorCultivo = {};
+  const esPlanPago = req.user.plan === 'pro' || req.user.plan === 'premium';
+  if (esPlanPago) {
+    const ultimosConsejos = await Consejo.aggregate([
+      { $match: { cultivo: { $in: cultivoIds } } },
+      { $sort: { createdAt: -1 } },
+      { $group: { _id: '$cultivo', mensaje: { $first: '$mensaje' }, createdAt: { $first: '$createdAt' } } },
+    ]);
+    ultimoConsejoPorCultivo = Object.fromEntries(
+      ultimosConsejos.map((c) => [c._id.toString(), { mensaje: c.mensaje, createdAt: c.createdAt }])
+    );
+  }
+
   const cultivosConConteo = cultivos.map((c) => ({
     ...c.toObject(),
     cantidadSeguimientos: conteoPorCultivo[c._id.toString()] || 0,
+    ultimoConsejo: ultimoConsejoPorCultivo[c._id.toString()] || null,
   }));
 
   const total = await Cultivo.countDocuments(filtro);
